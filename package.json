@@ -5,8 +5,8 @@
   "main": "./dist/index.js",
   "scripts": {
     "build": "( rd /s /q \"dist\" || echo \"No dist dir found !\" ) && tsc",
-    "dev": "npm run build && ( SET NODE_ENV=dev || SETENV NODE_ENV=dev ) && node ./dist/index.js",
-    "start": "npm run build && ( SET NODE_ENV=prod || SETENV NODE_ENV=prod ) && node ./dist/index.js",
+    "dev": "npm run build && node ./dist/index.js",
+    "start": "npm run build && node ./dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
