@@ -46,11 +46,12 @@ class UserInfoCommand extends Command {
         
         const embed = new MessageEmbed()
             .setTitle(pupa(config.embed.title, { member: finalMember }))
+            .setThumbnail(finalMember.user.avatarURL())
             .addField(config.embed.username, finalMember.user.username)
             .addField(config.embed.discriminator, finalMember.user.discriminator)
             .addField(config.embed.userId, finalMember.user.id)
             .addField(config.embed.nickname, finalMember.nickname ?? '*aucun*')
-            .setFooter(pupa(settings.embed.footer, { executor: message.author.username }))
+            .setFooter(pupa(settings.embed.footer, { executor: message.member.nickname ?? message.member.user.username }))
             .setColor(settings.colors.default)
             .setTimestamp();
 
