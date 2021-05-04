@@ -1,26 +1,27 @@
-import { tempban as config } from "@app/config/commands/moderation";
-import messages from "@app/config/messages";
-import settings from "@app/config/settings";
-import SanctionsManager from "@app/moderation/SanctionsManager";
-import { GuildMessage } from "@app/types";
-import { TempBanCommandArguments } from "@app/types/CommandArguments";
-import { Command, Argument } from "discord-akairo";
-import { MessageEmbed } from "discord.js";
-import { GuildMember } from "discord.js";
-import { User } from "discord.js";
+import { Command } from 'discord-akairo';
+import { MessageEmbed } from 'discord.js';
+import { tempban as config } from '@app/config/commands/moderation';
+import messages from '@app/config/messages';
+import settings from '@app/config/settings';
+import SanctionsManager from '@app/moderation/SanctionsManager';
+import type { GuildMessage } from '@app/types';
+import type { TempBanCommandArguments } from '@app/types/CommandArguments';
+import { noop } from '@app/utils';
+// eslint-disable-next-line import/order
 import pupa = require('pupa');
+
 
 class TempBanCommand extends Command {
     constructor() {
         super('tempban', {
             aliases: config.settings.aliases,
             args: [{
-                id: 'member',
-                type: Argument.union('member', 'user'),
+                id: 'user',
+                type: 'user',
                 prompt: {
                     start: pupa(messages.prompt.start, { required: 'le membre à avertir' }),
                     retry: pupa(messages.prompt.retry, { required: 'le membre à avertir' }),
-                }
+                },
             },
             {
                 id: 'duration',
@@ -28,8 +29,8 @@ class TempBanCommand extends Command {
                 prompt: {
                     start: pupa(messages.prompt.start, { required: 'la durée (Ex: 2d <=> 2 jours / 10m <=> 10 minutes)' }),
                     retry: pupa(messages.prompt.retry, { required: 'la durée (Ex: 2d <=> 2 jours / 10m <=> 10 minutes)' }),
-                }
-            },            
+                },
+            },
             {
                 id: 'reason',
                 type: 'string',
@@ -37,7 +38,7 @@ class TempBanCommand extends Command {
                 prompt: {
                     start: pupa(messages.prompt.start, { required: 'la raison' }),
                     retry: pupa(messages.prompt.retry, { required: 'la raison' }),
-                }
+                },
             }],
             clientPermissions: config.settings.clientPermissions,
             userPermissions: config.settings.userPermissions,
@@ -47,49 +48,37 @@ class TempBanCommand extends Command {
     }
 
     public async exec(message: GuildMessage, args: TempBanCommandArguments): Promise<void> {
-        const { member, duration, reason } = args;
+        const { user, duration, reason } = args;
 
-        if (member == null) {
-            message.channel.send(config.messages.notfound);
+        if (user == null) {
+            message.channel.send(config.messages.notfound).catch(noop);
             return;
         }
 
-        if(member instanceof User) {
-            const gmember = message.guild.members.cache.get(member.id);
-            if(gmember.roles.highest.position >= message.member.roles.highest.position) {
-                message.channel.send(config.messages.noperm);
-                return;
-            }
-        } else {
-            if(member.roles.highest.position >= message.member.roles.highest.position) {
-                message.channel.send(config.messages.noperm);
-                return;
-            }
+        const member = message.guild.members.cache.get(user.id);
+        if (member.roles.highest.position >= message.member.roles.highest.position) {
+            message.channel.send(config.messages.noperm).catch(noop);
+            return;
         }
 
         const processing = await message.channel.send(config.messages.processing);
-        const success = await SanctionsManager.tempban(member, reason, duration, message.member);
+        const success = await SanctionsManager.tempban(user, reason, duration, message.member);
         await processing.delete();
         if (success) {
-            const username = member instanceof GuildMember ?
-                ((member as GuildMember).nickname == null ?
-                    member.user.username :
-                    member.nickname) :
-                member.username;
             const embed = new MessageEmbed()
                 .setTitle(config.embed.title)
-                .addField(config.embed.username, username)
+                .addField(config.embed.username, (member.nickname == null ? user.username : `${member.nickname} (${user.username})`))
                 .addField(config.embed.duration, duration.humanReadable())
                 .addField(config.embed.reason, reason)
                 .setColor(settings.colors.default)
-                .setFooter(pupa(settings.embed.footer, { executor: (message.member.nickname ?? message.member.user.username) }))
+                .setFooter(pupa(settings.embed.footer,
+                    { executor: (message.member.nickname ?? message.member.user.username) }))
                 .setTimestamp();
-            message.channel.send(embed);
+            message.channel.send(embed).catch(noop);
         } else {
-            message.channel.send(messages.oops);
+            message.channel.send(messages.oops).catch(noop);
         }
     }
-
 }
 
 export default TempBanCommand;

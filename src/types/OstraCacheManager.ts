@@ -1,4 +1,4 @@
-import { SanctionDocument } from ".";
+import type { SanctionDocument } from '.';
 
 class OstraCacheManager {
     sanctions: SanctionDocument[];

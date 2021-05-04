@@ -1,8 +1,9 @@
-import type { Command } from "discord-akairo";
-import { VoiceChannel } from "discord.js";
-import { User } from "discord.js";
-import { GuildMember } from "discord.js";
-import { Duration } from ".";
+/* eslint-disable @typescript-eslint/no-empty-interface */
+import type { Command } from 'discord-akairo';
+import type { GuildMember, User, VoiceChannel } from 'discord.js';
+
+
+import type { Duration } from '.';
 
 export interface HelpCommandArguments {
     command: Command;
@@ -17,8 +18,8 @@ export interface PurgeCommandArguments {
 }
 
 export interface TempBanCommandArguments {
-    member: GuildMember | User;
-    duration: Duration,
+    user: User;
+    duration: Duration;
     reason: string;
 }
 

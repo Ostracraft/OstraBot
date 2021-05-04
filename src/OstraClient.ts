@@ -1,14 +1,14 @@
-import { AkairoClient, CommandHandler } from "discord-akairo";
-import Logger from "@app/structures/Logger";
-import settings from "@app/config/settings";
 import * as path from 'path';
-import { ListenerHandler } from "discord-akairo";
-import OstraCacheManager from "./types/OstraCacheManager";
-import { default as Sanction } from "./models/sanction";
-import { nullop } from "./utils";
+import { AkairoClient, CommandHandler, ListenerHandler } from 'discord-akairo';
+import settings from '@app/config/settings';
 import * as resolvers from '@app/resolvers';
-import TaskHandler from "./structures/TaskHandler";
-import messages from "./config/messages";
+import Logger from '@app/structures/Logger';
+
+import messages from './config/messages';
+import Sanction from './models/sanction';
+import TaskHandler from './structures/TaskHandler';
+import OstraCacheManager from './types/OstraCacheManager';
+import { nullop } from './utils';
 
 class OstraClient extends AkairoClient {
     constructor() {
@@ -17,15 +17,15 @@ class OstraClient extends AkairoClient {
         }, {
             disableMentions: 'everyone',
         });
-        
+
         Logger.info('Starting the bot...');
         this.cache = new OstraCacheManager();
-        
+
         Logger.info('Creating Command handler');
         this.commandHandler = new CommandHandler(this, {
             prefix: settings.bot.prefix,
             allowMention: false,
-            commandUtil: true, // a voir
+            commandUtil: true, // A voir
             fetchMembers: true,
             directory: path.join(__dirname, 'commands/'),
             automateCategories: true,
@@ -40,8 +40,8 @@ class OstraClient extends AkairoClient {
                     timeout: messages.prompt.timeout,
                     ended: messages.prompt.ended,
                     cancel: messages.prompt.cancel,
-                }
-            }
+                },
+            },
         });
 
         Logger.info('Creating Listener handler');
@@ -60,27 +60,27 @@ class OstraClient extends AkairoClient {
         this.commandHandler.useListenerHandler(this.listenerHandler);
         this.listenerHandler.setEmitters({
             commandHandler: this.commandHandler,
-        })
+        });
         this.listenerHandler.loadAll();
         this.taskHandler.loadAll();
 
-        for (const [name, resolver] of Object.entries(resolvers)) {
+        for (const [name, resolver] of Object.entries(resolvers))
             this.commandHandler.resolver.addType(name, resolver);
-        }
+
 
         Logger.info('Caching database');
-        this._loadSanctions();
+        void this._loadSanctions();
 
         this.on('ready', () => {
             this.guild = this.guilds.resolve(settings.bot.guild);
-            Logger.info('Bot is ready !');  
+            Logger.info('Bot is ready !');
             this.loaded = true;
         });
     }
 
     private async _loadSanctions(): Promise<void> {
         const sanctions = await Sanction.find().catch(nullop);
-        if(sanctions)
+        if (sanctions)
             this.cache.sanctions.push(...sanctions);
     }
 }

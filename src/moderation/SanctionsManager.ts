@@ -1,27 +1,27 @@
-import settings from "@app/config/settings";
-import Logger from "@app/structures/Logger";
-import { default as Sanction } from "@app/models/sanction";
-import { Duration, SanctionBase, SanctionDocument, SanctionTypes } from "@app/types";
-import { Permissions } from "discord.js";
-import { MessageEmbed } from "discord.js";
-import { TextChannel } from "discord.js";
-import { User } from "discord.js";
-import { GuildMember } from "discord.js";
-import * as moderationConfig from "@app/config/commands/moderation";
-import pupa = require("pupa");
-import { Channel } from "discord.js";
-import { AkairoClient } from "discord-akairo";
+import type { AkairoClient } from 'discord-akairo';
+import { MessageEmbed, Permissions } from 'discord.js';
+import type { GuildMember, TextChannel, User } from 'discord.js';
+import * as moderationConfig from '@app/config/commands/moderation';
+import settings from '@app/config/settings';
+import Sanction from '@app/models/sanction';
+import Logger from '@app/structures/Logger';
+import type { Duration, SanctionBase, SanctionDocument } from '@app/types';
+import { SanctionTypes } from '@app/types';
+import { noop } from '@app/utils';
+// eslint-disable-next-line import/order
+import pupa = require('pupa');
+
 
 async function warn(user: User, reason: string, moderator: GuildMember): Promise<boolean> {
     const document: SanctionBase = {
         memberId: user.id,
         type: SanctionTypes.WARN,
-        reason: reason,
+        reason,
         start: Date.now(),
         moderatorId: moderator.id,
         revoked: false,
-    }
-    user.send(pupa(moderationConfig.warn.messages.dm, { reason }));
+    };
+    user.send(pupa(moderationConfig.warn.messages.dm, { reason })).catch(noop);
     try {
         await Sanction.create(document);
         return true;
@@ -36,74 +36,51 @@ async function warn(user: User, reason: string, moderator: GuildMember): Promise
     }
 }
 
-async function tempban(member: GuildMember | User, reason: string, duration: Duration, moderator: GuildMember): Promise<Boolean> {
+async function tempban(user: User, reason: string, duration: Duration, moderator: GuildMember): Promise<boolean> {
     const role = moderator.guild.roles.cache.get(settings.roles.banned);
-    let channel: TextChannel;
-    if (member instanceof GuildMember) {
-        member.roles.add(role);
-        channel = await moderator.guild.channels.create('ban-' + member.nickname ?? member.user.username, {
-            type: 'text',
-            topic: `Salon du bannissement de ${member.nickname ?? member.user.username} (${member.id})`,
-            parent: settings.categories.banned,
-            permissionOverwrites: [
-                {
-                    id: settings.roles.everyone,
-                    deny: [Permissions.FLAGS.VIEW_CHANNEL, Permissions.FLAGS.CREATE_INSTANT_INVITE]
-                },
-                {
-                    id: settings.roles.staff,
-                    allow: [Permissions.FLAGS.VIEW_CHANNEL, Permissions.FLAGS.CREATE_INSTANT_INVITE]
-                },
-                {
-                    id: member.id,
-                    allow: [Permissions.FLAGS.VIEW_CHANNEL]
-                }
-            ]
-        });
-    } else {
-        const gmember: GuildMember = moderator.guild.members.cache.get(member.id);
-        gmember.roles.add(role);
-        channel = await moderator.guild.channels.create('ban-' + (gmember.nickname == null ? gmember.user.username : gmember.nickname), {
-            type: 'text',
-            topic: `Salon du bannissement de ${gmember.nickname == null ? gmember.user.username : gmember.nickname} (${gmember.id})`,
-            parent: settings.categories.banned,
-            permissionOverwrites: [
-                {
-                    id: settings.roles.everyone,
-                    deny: [Permissions.FLAGS.VIEW_CHANNEL, Permissions.FLAGS.CREATE_INSTANT_INVITE]
-                },
-                {
-                    id: settings.roles.staff,
-                    allow: [Permissions.FLAGS.VIEW_CHANNEL, Permissions.FLAGS.CREATE_INSTANT_INVITE]
-                },
-                {
-                    id: gmember.id,
-                    allow: [Permissions.FLAGS.VIEW_CHANNEL]
-                }
-            ]
-        });
-    }
+    const member = moderator.guild.members.cache.get(user.id);
+    member.roles.add(role).catch(noop);
+    const channel: TextChannel = await moderator.guild.channels.create('ban-' + member.nickname ?? member.user.username, {
+        type: 'text',
+        topic: `Salon du bannissement de ${member.nickname ?? member.user.username} (${member.id})`,
+        parent: settings.categories.banned,
+        permissionOverwrites: [
+            {
+                id: settings.roles.everyone,
+                deny: [Permissions.FLAGS.VIEW_CHANNEL, Permissions.FLAGS.CREATE_INSTANT_INVITE],
+            },
+            {
+                id: settings.roles.staff,
+                allow: [Permissions.FLAGS.VIEW_CHANNEL, Permissions.FLAGS.CREATE_INSTANT_INVITE],
+            },
+            {
+                id: member.id,
+                allow: [Permissions.FLAGS.VIEW_CHANNEL],
+            },
+        ],
+    });
     const gmember: GuildMember = moderator.guild.members.cache.get(member.id);
     const embed = new MessageEmbed()
-        .setTitle(pupa(moderationConfig.tempban.private.title, { username: (gmember.nickname == null ? gmember.user.username : gmember.nickname) }))
+        .setTitle(pupa(moderationConfig.tempban.private.title,
+            { username: (gmember.nickname == null ? gmember.user.username : gmember.nickname) }))
         .addField(moderationConfig.tempban.private.duration, duration.humanReadable())
         .addField(moderationConfig.tempban.private.reason, reason)
         .setColor(settings.colors.default)
         .setFooter(gmember.nickname ?? gmember.user.username)
         .setTimestamp();
-    channel.send(embed);
-    channel.send(moderationConfig.tempban.private.message);
+    channel.send(embed).catch(noop);
+    channel.send(moderationConfig.tempban.private.message).catch(noop);
 
     const document: SanctionBase = {
         memberId: member.id,
         type: SanctionTypes.TEMPBAN,
-        reason: reason,
+        reason,
         start: Date.now(),
         duration: duration.asMillis(),
         moderatorId: moderator.id,
         revoked: false,
-        channel: channel.id
-    }
+        channel: channel.id,
+    };
 
     try {
         await Sanction.create(document);
@@ -123,30 +100,32 @@ async function tempban(member: GuildMember | User, reason: string, duration: Dur
 async function unban(client: AkairoClient, doc: SanctionDocument): Promise<boolean> {
     try {
         const member: GuildMember = client.guild.members.cache.get(doc.memberId);
-        member.roles.remove(settings.roles.banned);
+        member.roles.remove(settings.roles.banned).catch(noop);
         const channel: TextChannel = client.guild.channels.cache.get(doc.channel) as TextChannel;
-        channel.edit({
-            name: 'un' + (channel as TextChannel).name,
+        await channel.edit({
+            name: 'un' + (channel).name,
             permissionOverwrites: [
                 {
                     id: settings.roles.everyone,
-                    deny: [Permissions.FLAGS.VIEW_CHANNEL, Permissions.FLAGS.CREATE_INSTANT_INVITE]
+                    deny: [Permissions.FLAGS.VIEW_CHANNEL, Permissions.FLAGS.CREATE_INSTANT_INVITE],
                 },
                 {
                     id: settings.roles.staff,
-                    allow: [Permissions.FLAGS.VIEW_CHANNEL, Permissions.FLAGS.CREATE_INSTANT_INVITE]
-                }
-            ]
+                    allow: [Permissions.FLAGS.VIEW_CHANNEL, Permissions.FLAGS.CREATE_INSTANT_INVITE],
+                },
+            ],
         });
         const embed = new MessageEmbed()
             .setTitle(moderationConfig.unban.embed.title)
-            .addField(moderationConfig.unban.embed.username, (member.nickname == null ? member.user.username : member.nickname))
+            .addField(moderationConfig.unban.embed.username,
+                (member.nickname == null ? member.user.username : member.nickname))
             .setColor(settings.colors.default)
             .setTimestamp()
             .setFooter('Unban automatique');
-        channel.send(embed);
+        channel.send(embed).catch(noop);
         return true;
-    } catch (unknownError: unknown) {
+    // eslint-disable-next-line unicorn/prefer-optional-catch-binding
+    } catch (_unknownError: unknown) {
         return false;
     }
 }
@@ -155,4 +134,4 @@ export default {
     warn,
     tempban,
     unban,
-}
+};

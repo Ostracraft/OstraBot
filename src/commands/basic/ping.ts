@@ -1,9 +1,10 @@
-import { Command } from "discord-akairo";
-import { ping as config } from "@app/config/commands/basic";
-import { GuildMessage } from "@app/types";
-import { PingCommandArguments } from "@app/types/CommandArguments";
-import { MessageEmbed } from "discord.js";
-import settings from "@app/config/settings";
+import { Command } from 'discord-akairo';
+import { MessageEmbed } from 'discord.js';
+import { ping as config } from '@app/config/commands/basic';
+import settings from '@app/config/settings';
+import type { GuildMessage } from '@app/types';
+import type { PingCommandArguments } from '@app/types/CommandArguments';
+// eslint-disable-next-line import/order
 import pupa = require('pupa');
 
 class PingCommand extends Command {
@@ -17,9 +18,10 @@ class PingCommand extends Command {
     this.details = config.details;
   }
 
-  public async exec(message: GuildMessage, args: PingCommandArguments): Promise<void> {
+  public async exec(message: GuildMessage, _: PingCommandArguments): Promise<void> {
     const firstMessage = await message.channel.send(config.messages.firstMessage);
-    const botPing = (firstMessage.createdAt || firstMessage.editedAt).getTime() - (message.createdAt || message.editedAt).getTime();
+    const botPing = (firstMessage.createdAt || firstMessage.editedAt).getTime()
+      - (message.createdAt || message.editedAt).getTime();
     const discordPing = Math.round(this.client.ws.ping);
 
     const description = pupa(config.messages.embedDescription, {
@@ -48,7 +50,6 @@ class PingCommand extends Command {
       return ':yellow_circle:';
     return ':green_circle:';
   }
-
 }
 
 export default PingCommand;

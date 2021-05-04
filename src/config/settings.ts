@@ -16,20 +16,20 @@ const settings = {
         default: '#20b848',
     },
     embed: {
-        footer: 'Exécuté par {executor}'
+        footer: 'Exécuté par {executor}',
     },
     moderation: {
-        purgeLimit: 50
+        purgeLimit: 50,
     },
     database: {
-        mongoUri: process.env.MONGO_URI ?? "",
+        mongoUri: process.env.MONGO_URI ?? '',
     },
     emojis: {
-        discord: process.env.EMOJI_DISCORD ?? "",
-        info: process.env.EMOJI_INFO ?? "",
-        oui: process.env.EMOJI_OUI ?? "",
-        non: process.env.EMOJI_NON ?? "",
-    }
-}
+        discord: process.env.EMOJI_DISCORD ?? '',
+        info: process.env.EMOJI_INFO ?? '',
+        oui: process.env.EMOJI_OUI ?? '',
+        non: process.env.EMOJI_NON ?? '',
+    },
+};
 
 export default settings;

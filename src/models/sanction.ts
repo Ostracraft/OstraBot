@@ -1,5 +1,7 @@
-import { SanctionBase, SanctionDocument, SanctionModel, SanctionTypes } from "@app/types";
-import { FilterQuery, model, Schema } from "mongoose";
+import type { FilterQuery } from 'mongoose';
+import { model, Schema } from 'mongoose';
+import type { SanctionBase, SanctionDocument, SanctionModel } from '@app/types';
+import { SanctionTypes } from '@app/types';
 
 const SanctionSchema = new Schema({
     memberId: {
@@ -9,7 +11,7 @@ const SanctionSchema = new Schema({
     type: {
         type: String,
         required: true,
-        enum: Object.values(SanctionTypes)
+        enum: Object.values(SanctionTypes),
     },
     reason: {
         type: String,
@@ -33,16 +35,16 @@ const SanctionSchema = new Schema({
     channel: {
         type: String,
         required: false,
-    }
+    },
 });
 
-SanctionSchema.statics.findOneOrCreate = async function(
-    this: SanctionModel, 
+SanctionSchema.statics.findOneOrCreate = async function (
+    this: SanctionModel,
     condition: FilterQuery<SanctionDocument>,
-    doc: SanctionBase
+    doc: SanctionBase,
 ): Promise<SanctionDocument> {
     const result = await this.findOne(condition);
     return result || this.create(doc);
-}
+};
 
 export default model<SanctionDocument, SanctionModel>('Sanction', SanctionSchema);

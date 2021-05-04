@@ -1,11 +1,14 @@
-import { Command } from "discord-akairo";
-import { help as config } from "@app/config/commands/basic";
-import { GuildMessage } from "@app/types";
-import { HelpCommandArguments } from "@app/types/CommandArguments";
-import { MessageEmbed } from "discord.js";
-import settings from "@app/config/settings";
+import { Command } from 'discord-akairo';
+import type { PermissionResolvable } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
+import { help as config } from '@app/config/commands/basic';
+import settings from '@app/config/settings';
+import type { GuildMessage } from '@app/types';
+import type { HelpCommandArguments } from '@app/types/CommandArguments';
+import { noop } from '@app/utils';
+// eslint-disable-next-line import/order
 import pupa = require('pupa');
-import { PermissionResolvable } from "discord.js";
+
 
 class HelpCommand extends Command {
     constructor() {
@@ -23,35 +26,36 @@ class HelpCommand extends Command {
     }
 
 
-    public async exec(message: GuildMessage, args: HelpCommandArguments): Promise<void> {
+    public exec(message: GuildMessage, args: HelpCommandArguments): void {
         const { command } = args;
         const { categories } = this.handler;
         if (command) {
-            const details = command.details;
+            const { details } = command;
 
             const embed = new MessageEmbed()
                 .setTitle(pupa(config.messages.command.title, { command: details.name }))
                 .addField(config.messages.command.description, details.content)
-                .addField(config.messages.command.aliases, command.aliases.join(", "))
+                .addField(config.messages.command.aliases, command.aliases.join(', '))
                 .addField(config.messages.command.usage, details.usage)
                 .addField(config.messages.command.examples, details.examples)
                 .setFooter(pupa(settings.embed.footer, message.author))
                 .setColor(settings.colors.default)
                 .setTimestamp();
 
-            message.channel.send(embed);
-
+            message.channel.send(embed).catch(noop);
         } else {
             const embed = new MessageEmbed()
                 .setTitle(config.messages.global.title)
-                .setFooter(pupa(settings.embed.footer, { executor: message.member.nickname ?? message.member.user.username }))
+                .setFooter(pupa(settings.embed.footer,
+                    { executor: message.member.nickname ?? message.member.user.username }))
                 .setColor(settings.colors.default)
                 .setTimestamp();
             for (const category of categories.array()) {
-                const content = category.map(command => (this._isAllowed(command, message) ? `\`${command.aliases[0]}\`` : `~~\`${command.aliases[0]}\`~~`)).join(config.messages.global.field.separator);
-                embed.addField(pupa(config.messages.global.field.title, { category: category.id.toUpperCase() }), pupa(config.messages.global.field.content, { content }));
+                const content = category.map(cmd => (this._isAllowed(cmd, message) ? `\`${cmd.aliases[0]}\`` : `~~\`${cmd.aliases[0]}\`~~`)).join(config.messages.global.field.separator);
+                embed.addField(pupa(config.messages.global.field.title, { category: category.id.toUpperCase() }),
+                            pupa(config.messages.global.field.content, { content }));
             }
-            message.channel.send(embed);
+            message.channel.send(embed).catch(noop);
         }
     }
 

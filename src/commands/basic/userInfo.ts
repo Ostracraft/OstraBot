@@ -1,12 +1,12 @@
-import { Command } from "discord-akairo";
-import { userInfo as config } from "@app/config/commands/basic";
-import { Argument } from "discord-akairo";
-import { GuildMessage } from "@app/types";
-import { UserInfoCommandArguments } from "@app/types/CommandArguments";
-import { GuildMember } from "discord.js";
-import settings from "@app/config/settings";
-import messages from "@app/config/messages";
-import { MessageEmbed } from "discord.js";
+import { Argument, Command } from 'discord-akairo';
+import { GuildMember, MessageEmbed } from 'discord.js';
+import { userInfo as config } from '@app/config/commands/basic';
+import messages from '@app/config/messages';
+import settings from '@app/config/settings';
+import type { GuildMessage } from '@app/types';
+import type { UserInfoCommandArguments } from '@app/types/CommandArguments';
+import { noop } from '@app/utils';
+// eslint-disable-next-line import/order
 import pupa = require('pupa');
 
 class UserInfoCommand extends Command {
@@ -22,32 +22,30 @@ class UserInfoCommand extends Command {
                 prompt: {
                     start: pupa(messages.prompt.start, { required: 'le membre que vous souhaitez' }),
                     retry: pupa(messages.prompt.retry, { required: 'le membre que vous souhaitez' }),
-                }
+                },
             }],
         });
         this.details = config.details;
     }
 
-    
-    public async exec(message: GuildMessage, args: UserInfoCommandArguments): Promise<void> {
+
+    public exec(message: GuildMessage, args: UserInfoCommandArguments): void {
         const { member } = args;
 
-        if(typeof member === 'undefined' || member == null) {
-            message.channel.send(config.messages.notfound);
+        if (typeof member === 'undefined' || member == null) {
+            message.channel.send(config.messages.notfound).catch(noop);
             return;
         }
 
-        let finalMember: GuildMember;
-        if(member instanceof GuildMember)
-            finalMember = member;
-        else
-            finalMember = message.guild.members.cache.get(member.id);
-            
-        if(typeof finalMember === 'undefined') {
-            message.channel.send(messages.oops);
+        const finalMember: GuildMember = member instanceof GuildMember
+            ? member
+            : message.guild.members.cache.get(member.id);
+
+        if (typeof finalMember === 'undefined') {
+            message.channel.send(messages.oops).catch(noop);
             return;
         }
-        
+
         const embed = new MessageEmbed()
             .setTitle(pupa(config.embed.title, { member: finalMember }))
             .setThumbnail(finalMember.user.avatarURL())
@@ -55,14 +53,13 @@ class UserInfoCommand extends Command {
             .addField(config.embed.discriminator, finalMember.user.discriminator)
             .addField(config.embed.userId, finalMember.user.id)
             .addField(config.embed.nickname, finalMember.nickname ?? '*aucun*')
-            .setFooter(pupa(settings.embed.footer, { executor: message.member.nickname ?? message.member.user.username }))
+            .setFooter(pupa(settings.embed.footer,
+                { executor: message.member.nickname ?? message.member.user.username }))
             .setColor(settings.colors.default)
             .setTimestamp();
 
-        message.channel.send(embed);
-
+        message.channel.send(embed).catch(noop);
     }
-
 }
 
 export default UserInfoCommand;

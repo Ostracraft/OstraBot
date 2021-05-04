@@ -1,5 +1,5 @@
-import settings from "@app/config/settings";
-import { hasStaffRole, noPermissions, permissions } from "../configUtil";
+import settings from '@app/config/settings';
+import { noPermissions, permissions } from '../configUtil';
 
 export const help = {
     settings: {
@@ -27,10 +27,10 @@ export const help = {
                 title: '» Catégorie: {category}',
                 content: '{content}',
                 separator: ' • ',
-            }
-        }
-    }
-}
+            },
+        },
+    },
+};
 
 export const ping = {
     settings: {
@@ -50,12 +50,12 @@ export const ping = {
 
         ${settings.emojis.discord} API Discord : {discordPing} ms {discordIndic}`,
     },
-    
-}
+
+};
 
 export const userInfo = {
     settings: {
-        aliases: ['userInfo',  'user'],
+        aliases: ['userInfo', 'user'],
         clientPermissions: permissions.SEND_MESSAGES,
         userPermissions: noPermissions,
     },
@@ -66,7 +66,7 @@ export const userInfo = {
         examples: [
             'userinfo Gleush',
             'userinfo 435756597168308225',
-            'userinfo @Arthuroklm'
+            'userinfo @Arthuroklm',
         ],
     },
     embed: {
@@ -74,9 +74,9 @@ export const userInfo = {
         username: '» Username:',
         discriminator: '» Discriminant:',
         userId: '» ID:',
-        nickname: '» Surnom:'
+        nickname: '» Surnom:',
     },
     messages: {
         notfound: `${settings.emojis.non} » Ce membre n'a pas été trouvé !`,
     },
-}
+};

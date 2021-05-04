@@ -1,6 +1,9 @@
-import { NewsChannel, TextChannel, Message, GuildMember, Guild } from "discord.js";
-import { Document, FilterQuery, Model } from "mongoose";
-import cron from 'node-cron';
+/* eslint-disable @typescript-eslint/naming-convention */
+import type {
+ Guild, GuildMember, Message, NewsChannel, TextChannel,
+} from 'discord.js';
+import type { Document, FilterQuery, Model } from 'mongoose';
+import type cron from 'node-cron';
 
 /** A TextChannel which is in a guild */
 export type GuildTextBasedChannel = NewsChannel | TextChannel;
@@ -22,14 +25,14 @@ export enum SanctionTypes {
 
 /** Interface for mongoose's schema */
 export interface SanctionBase {
-    memberId: string,
-    type: SanctionTypes,
-    reason: string,
-    start: number,
-    duration?: number,
-    moderatorId: string,
-    revoked: boolean,
-    channel?: string,
+    memberId: string;
+    type: SanctionTypes;
+    reason: string;
+    start: number;
+    duration?: number;
+    moderatorId: string;
+    revoked: boolean;
+    channel?: string;
 }
 
 /** Interface for mongoose's document */
@@ -45,14 +48,15 @@ export interface SanctionModel extends Model<SanctionDocument> {
 
 /** Duration object */
 export class Duration {
-    private mo: number;
-    private w: number;
-    private d: number;
-    private h: number;
-    private m: number;
-    private s: number;
+    private readonly mo: number;
+    private readonly w: number;
+    private readonly d: number;
+    private readonly h: number;
+    private readonly m: number;
+    private readonly s: number;
 
-    public constructor(mo: number, w: number, d: number, h: number, m: number, s: number) {
+    // eslint-disable-next-line max-params
+    constructor(mo: number, w: number, d: number, h: number, m: number, s: number) {
         this.mo = mo;
         this.w = w;
         this.d = d;
@@ -61,17 +65,23 @@ export class Duration {
         this.s = s;
     }
 
-    public getMonths(): number { return this.mo ?? 0 }
-    public getWeeks(): number { return this.w ?? 0 }
-    public getDays(): number { return this.d ?? 0 }
-    public getHours(): number { return this.h ?? 0 }
-    public getMinutes(): number { return this.m ?? 0 }
-    public getSeconds(): number { return this.s ?? 0 }
-    public isEmpty(): Boolean {
-        return this.getMonths() == 0 && this.getWeeks() == 0 && this.getDays() == 0 && this.getHours() == 0 && this.getMinutes() == 0 && this.getSeconds() == 0;
+    public getMonths(): number { return this.mo ?? 0; }
+    public getWeeks(): number { return this.w ?? 0; }
+    public getDays(): number { return this.d ?? 0; }
+    public getHours(): number { return this.h ?? 0; }
+    public getMinutes(): number { return this.m ?? 0; }
+    public getSeconds(): number { return this.s ?? 0; }
+    public isEmpty(): boolean {
+        return this.getMonths() === 0
+                && this.getWeeks() === 0
+                && this.getDays() === 0
+                && this.getHours() === 0
+                && this.getMinutes() === 0
+                && this.getSeconds() === 0;
     }
+
     public asMillis(): number {
-        let millis: number = 0;
+        let millis = 0;
         millis += this.getMonths() * 30 * 24 * 60 * 60 * 1000;
         millis += this.getWeeks() * 7 * 24 * 60 * 60 * 1000;
         millis += this.getDays() * 24 * 60 * 60 * 1000;
@@ -80,28 +90,30 @@ export class Duration {
         millis += this.getSeconds() * 1000;
         return millis;
     }
+
     public toString(): string {
-        return this.getMonths() + ' months, ' +
-            this.getWeeks() + ' weeks, ' +
-            this.getDays() + ' days, ' +
-            this.getHours() + ' hours, ' +
-            this.getMinutes() + ' minutes, ' +
-            this.getSeconds() + ' seconds';
+        return this.getMonths().toString() + ' months, '
+            + this.getWeeks().toString() + ' weeks, '
+            + this.getDays().toString() + ' days, '
+            + this.getHours().toString() + ' hours, '
+            + this.getMinutes().toString() + ' minutes, '
+            + this.getSeconds().toString() + ' seconds';
     }
+
     public humanReadable(): string {
-        let s: string = "";
+        let s = '';
         if (this.getMonths() > 0)
-            s += this.getMonths() + " mois";
+            s += this.getMonths().toString() + ' mois';
         if (this.getWeeks() > 0)
-            s += (s != "" ? ", " : "") + this.getWeeks() + " semaine(s)";
+            s += (s === '' ? '' : ', ') + this.getWeeks().toString() + ' semaine(s)';
         if (this.getDays() > 0)
-            s += (s != "" ? ", " : "") + this.getDays() + " jour(s)";
+            s += (s === '' ? '' : ', ') + this.getDays().toString() + ' jour(s)';
         if (this.getHours() > 0)
-            s += (s != "" ? ", " : "") + this.getHours() + " heure(s)";
+            s += (s === '' ? '' : ', ') + this.getHours().toString() + ' heure(s)';
         if (this.getMinutes() > 0)
-            s += (s != "" ? ", " : "") + this.getMinutes() + " minute(s)";
+            s += (s === '' ? '' : ', ') + this.getMinutes().toString() + ' minute(s)';
         if (this.getSeconds() > 0)
-            s += (s != "" ? ", " : "") + this.getSeconds() + " seconde(s)";
+            s += (s === '' ? '' : ', ') + this.getSeconds().toString() + ' seconde(s)';
         return s;
     }
 }

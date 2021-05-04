@@ -19,7 +19,7 @@ class TaskHandler extends AkairoHandler {
     loadFilter = null,
   }: AkairoHandlerOptions) {
     if (!(classToHandle.prototype instanceof Task || classToHandle === Task))
-      throw new AkairoError('INVALID_CLASS_TO_HANDLE'/*, classToHandle.name, Task.name*/);
+      throw new AkairoError('INVALID_CLASS_TO_HANDLE'/* , classToHandle.name, Task.name */);
 
     super(client, {
       classToHandle,
@@ -47,7 +47,7 @@ class TaskHandler extends AkairoHandler {
   private _addToSchedule(id: string): Task {
     const task = this.modules.get(id.toString());
     if (!task || !(task instanceof Task))
-      throw new AkairoError('MODULE_NOT_FOUND'/*, this.classToHandle.name, id*/);
+      throw new AkairoError('MODULE_NOT_FOUND'/* , this.classToHandle.name, id */);
 
 
     const taskFunction = async (): Promise<void> => {
@@ -65,7 +65,7 @@ class TaskHandler extends AkairoHandler {
       const schedule = cron.schedule(task.cron, taskFunction);
       this.tasks.set(task.id, { schedule });
     } else {
-      throw new AkairoError('INVALID_TYPE'/*, 'cron or interval', `cron schedule or a number (${id})`*/);
+      throw new AkairoError('INVALID_TYPE'/* , 'cron or interval', `cron schedule or a number (${id})` */);
     }
     void taskFunction();
 
@@ -75,7 +75,7 @@ class TaskHandler extends AkairoHandler {
   private _removeFromSchedule(id: string): Task {
     const task = this.modules.get(id.toString()) as Task;
     if (!task)
-      throw new AkairoError('MODULE_NOT_FOUND'/*, this.classToHandle.name, id*/);
+      throw new AkairoError('MODULE_NOT_FOUND'/* , this.classToHandle.name, id */);
 
     const taskInfos = this.tasks.get(task.id);
     if (taskInfos?.interval)

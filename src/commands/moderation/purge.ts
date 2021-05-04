@@ -1,12 +1,13 @@
-import { Command } from "discord-akairo";
-import { purge as config } from "@app/config/commands/moderation";
-import { GuildMessage } from "@app/types";
-import { PurgeCommandArguments } from "@app/types/CommandArguments";
-import { Argument } from "discord-akairo";
-import settings from "@app/config/settings";
+import { Argument, Command } from 'discord-akairo';
+import type { Message } from 'discord.js';
+import { purge as config } from '@app/config/commands/moderation';
+import messages from '@app/config/messages';
+import settings from '@app/config/settings';
+import type { GuildMessage } from '@app/types';
+import type { PurgeCommandArguments } from '@app/types/CommandArguments';
+import { noop } from '@app/utils';
+// eslint-disable-next-line import/order
 import pupa = require('pupa');
-import { Message } from "discord.js";
-import messages from "@app/config/messages";
 
 class PurgeCommand extends Command {
     constructor() {
@@ -40,21 +41,18 @@ class PurgeCommand extends Command {
 
     public async exec(message: GuildMessage, args: PurgeCommandArguments): Promise<void> {
         const { amount, member, force } = args;
-        const channel = message.channel;
-        const messages = (await channel.messages.fetch({ limit: amount + 1 }))
+        const { channel } = message;
+        const list = (await channel.messages.fetch({ limit: amount + 1 }))
             .filter(msg => (member ? msg.author.id === member.id : true))
             .filter(msg => (force || !msg.member?.roles.cache.has(settings.roles.staff)));
-        const deleted = await channel.bulkDelete(messages, true);
-        let msg: Message;
-        if (amount < 2)
-            msg = await channel.send(config.messages.single);
-        else
-            msg = await channel.send(pupa(config.messages.several, { amount: deleted.size }));
+        const deleted = await channel.bulkDelete(list, true);
+        const msg: Message = await (amount < 2
+            ? channel.send(config.messages.single)
+            : channel.send(pupa(config.messages.several, { amount: deleted.size })));
         setTimeout(() => {
-            msg.delete();
+            msg.delete().catch(noop);
         }, 2000);
     }
-
 }
 
 export default PurgeCommand;

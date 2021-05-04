@@ -1,5 +1,5 @@
-import { noPermissions, permissions } from "@app/config/configUtil";
-import settings from "@app/config/settings";
+import { noPermissions, permissions } from '@app/config/configUtil';
+import settings from '@app/config/settings';
 
 export const betrayal = {
     settings: {
@@ -15,10 +15,10 @@ export const betrayal = {
     },
     messages: {
         notInChannel: `${settings.emojis.non} » Vous devez vous trouver dans un salon vocal ou préciser l'id du salon !`,
-        success: `${settings.emojis.oui} » Très bien ! Voici le lien d'invitation: {link}`
+        success: `${settings.emojis.oui} » Très bien ! Voici le lien d'invitation: {link}`,
     },
-    
-}
+
+};
 
 export const poker = {
     settings: {
@@ -34,10 +34,10 @@ export const poker = {
     },
     messages: {
         notInChannel: `${settings.emojis.non} » Vous devez vous trouver dans un salon vocal ou préciser l'id du salon !`,
-        success: `${settings.emojis.oui} » Très bien ! Voici le lien d'invitation: {link}`
+        success: `${settings.emojis.oui} » Très bien ! Voici le lien d'invitation: {link}`,
     },
-    
-}
+
+};
 
 
 export const youtube = {
@@ -54,7 +54,7 @@ export const youtube = {
     },
     messages: {
         notInChannel: `${settings.emojis.non} » Vous devez vous trouver dans un salon vocal ou préciser l'id du salon !`,
-        success: `${settings.emojis.oui} » Très bien ! Voici le lien d'invitation: {link}`
+        success: `${settings.emojis.oui} » Très bien ! Voici le lien d'invitation: {link}`,
     },
-    
-}
+
+};

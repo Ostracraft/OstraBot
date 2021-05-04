@@ -1,20 +1,23 @@
-import messages from "@app/config/messages";
-import Sanction from "@app/models/sanction";
-import SanctionsManager from "@app/moderation/SanctionsManager";
-import Task from "@app/structures/Task";
-import { SanctionDocument, SanctionTypes } from "@app/types";
-import { TextChannel } from "discord.js";
+import type { TextChannel } from 'discord.js';
+import messages from '@app/config/messages';
+import Sanction from '@app/models/sanction';
+import SanctionsManager from '@app/moderation/SanctionsManager';
+import Task from '@app/structures/Task';
+import type { SanctionDocument } from '@app/types';
+import { SanctionTypes } from '@app/types';
+import { noop } from '@app/utils';
+// eslint-disable-next-line import/order
 import pupa = require('pupa');
 
 class ModerationTask extends Task {
     constructor() {
         super('moderation', {
-            interval: 10000, // 10 seconds
+            interval: 10_000, // 10 seconds
         });
     }
 
     public async exec(): Promise<void> {
-        if(this.client.loaded)
+        if (this.client.loaded)
             await this._checkForUnbans();
     }
 
@@ -30,20 +33,20 @@ class ModerationTask extends Task {
                 // Update database
                 const doc = await Sanction.findOneAndUpdate(
                     { _id: sanction.id },
-                    { $set: { revoked: true, } }
+                    { $set: { revoked: true } },
                 );
                 // Unban user
                 const unban = await SanctionsManager.unban(this.client, doc);
                 if (!unban) {
                     const banChannel = this.client.guild.channels.cache.get(doc.channel);
                     console.log(banChannel);
-                    // if(!banChannel || !banChannel.isText())
+                    // If(!banChannel || !banChannel.isText())
                     //     return;
-                    (banChannel as TextChannel).send(pupa(messages.unbanError, { victim: doc.memberId }));
+                    (banChannel as TextChannel).send(pupa(messages.unbanError, { victim: doc.memberId })).catch(noop);
                 }
             }
         }
     }
-
 }
+
 export default ModerationTask;

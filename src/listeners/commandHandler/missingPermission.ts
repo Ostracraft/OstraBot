@@ -1,8 +1,8 @@
-import messages from "@app/config/messages";
-import settings from "@app/config/settings";
-import { Command } from "discord-akairo";
-import { Listener } from "discord-akairo";
-import { Message } from "discord.js";
+import { Listener } from 'discord-akairo';
+import type { Command } from 'discord-akairo';
+import type { Message } from 'discord.js';
+import messages from '@app/config/messages';
+import { noop } from '@app/utils';
 
 class MissingPermissionListener extends Listener {
     constructor() {
@@ -12,11 +12,11 @@ class MissingPermissionListener extends Listener {
         });
     }
 
-    public async exec(message: Message, command: Command, type: string, missing: string[]): Promise<void> {
+    public async exec(message: Message, _command: Command, _type: string, _missing: string[]): Promise<void> {
         const sended = await message.channel.send(messages.noperm);
         setTimeout(() => {
-            message.delete();
-            sended.delete();
+            message.delete().catch(noop);
+            sended.delete().catch(noop);
         }, 5000);
     }
 }
