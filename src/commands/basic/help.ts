@@ -44,7 +44,7 @@ class HelpCommand extends Command {
         } else {
             const embed = new MessageEmbed()
                 .setTitle(config.messages.global.title)
-                .setFooter(pupa(settings.embed.footer, message.author))
+                .setFooter(pupa(settings.embed.footer, { executor: message.member.nickname ?? message.member.user.username }))
                 .setColor(settings.colors.default)
                 .setTimestamp();
             for (const category of categories.array()) {

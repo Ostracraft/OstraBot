@@ -32,7 +32,7 @@ class PingCommand extends Command {
     const embed = new MessageEmbed()
       .setColor(settings.colors.default)
       .setDescription(description)
-      .setFooter(pupa(settings.embed.footer, { executor: message.author.username }))
+      .setFooter(pupa(settings.embed.footer, { executor: message.member.nickname ?? message.member.user.username }))
       .setTimestamp();
 
     await firstMessage.delete();
