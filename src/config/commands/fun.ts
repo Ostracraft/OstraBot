@@ -20,6 +20,26 @@ export const betrayal = {
     
 }
 
+export const poker = {
+    settings: {
+        aliases: ['poker', 'pk'],
+        clientPermissions: permissions.SEND_MESSAGES,
+        userPermissions: noPermissions,
+    },
+    details: {
+        name: 'Poker',
+        content: 'Permet de lancer le jeu Poker dans un vocal',
+        usage: 'poker',
+        examples: ['poker'],
+    },
+    messages: {
+        notInChannel: `${settings.emojis.non} » Vous devez vous trouver dans un salon vocal ou préciser l'id du salon !`,
+        success: `${settings.emojis.oui} » Très bien ! Voici le lien d'invitation: {link}`
+    },
+    
+}
+
+
 export const youtube = {
     settings: {
         aliases: ['youtube', 'yt'],
