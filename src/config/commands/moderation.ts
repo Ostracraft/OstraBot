@@ -54,7 +54,7 @@ export const tempban = {
         title: '{username} vous avez été sanctionné',
         duration: '» Durée:',
         reason: '» Raison:',
-        message: `${settings.emojis.info} » Si vous vous déconnectez avant la fin de votre sanction, vous subirez un bannissement définitif de notre Discord d'Ostracraft. Si vous souhaitez discuter de votre sanction avec le staff, vous pouvez le faire dans ce salon même.`,
+        message: `${settings.emojis.info} <@{user.id}> » Si vous vous déconnectez avant la fin de votre sanction, vous subirez un bannissement définitif de notre Discord d'Ostracraft. Si vous souhaitez discuter de votre sanction avec le staff, vous pouvez le faire dans ce salon même.`,
     },
 };
 

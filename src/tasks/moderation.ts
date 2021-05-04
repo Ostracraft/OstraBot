@@ -39,7 +39,6 @@ class ModerationTask extends Task {
                 const unban = await SanctionsManager.unban(this.client, doc);
                 if (!unban) {
                     const banChannel = this.client.guild.channels.cache.get(doc.channel);
-                    console.log(banChannel);
                     // If(!banChannel || !banChannel.isText())
                     //     return;
                     (banChannel as TextChannel).send(pupa(messages.unbanError, { victim: doc.memberId })).catch(noop);

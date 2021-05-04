@@ -69,7 +69,7 @@ async function tempban(user: User, reason: string, duration: Duration, moderator
         .setFooter(gmember.nickname ?? gmember.user.username)
         .setTimestamp();
     channel.send(embed).catch(noop);
-    channel.send(moderationConfig.tempban.private.message).catch(noop);
+    channel.send(pupa(moderationConfig.tempban.private.message, { user })).catch(noop);
 
     const document: SanctionBase = {
         memberId: member.id,
@@ -97,9 +97,9 @@ async function tempban(user: User, reason: string, duration: Duration, moderator
     }
 }
 
-async function unban(client: AkairoClient, doc: SanctionDocument): Promise<boolean> {
+async function unban(client: AkairoClient, doc: SanctionDocument, moderator?: GuildMember): Promise<boolean> {
     try {
-        const member: GuildMember = client.guild.members.cache.get(doc.memberId);
+        const member: GuildMember = await client.guild.members.fetch(doc.memberId);
         member.roles.remove(settings.roles.banned).catch(noop);
         const channel: TextChannel = client.guild.channels.cache.get(doc.channel) as TextChannel;
         await channel.edit({
@@ -121,7 +121,9 @@ async function unban(client: AkairoClient, doc: SanctionDocument): Promise<boole
                 (member.nickname == null ? member.user.username : member.nickname))
             .setColor(settings.colors.default)
             .setTimestamp()
-            .setFooter('Unban automatique');
+            .setFooter(moderator == null
+                ? 'Unban automatique'
+                : pupa(settings.embed.footer, { executor: moderator.nickname ?? moderator.user.username }));
         channel.send(embed).catch(noop);
         return true;
     // eslint-disable-next-line unicorn/prefer-optional-catch-binding
