@@ -19,6 +19,10 @@ class UserInfoCommand extends Command {
             args: [{
                 id: 'member',
                 type: Argument.union('member', 'user'),
+                prompt: {
+                    start: pupa(messages.prompt.start, { required: 'le membre que vous souhaitez' }),
+                    retry: pupa(messages.prompt.retry, { required: 'le membre que vous souhaitez' }),
+                }
             }],
         });
         this.details = config.details;

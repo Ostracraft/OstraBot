@@ -8,6 +8,7 @@ import { default as Sanction } from "./models/sanction";
 import { nullop } from "./utils";
 import * as resolvers from '@app/resolvers';
 import TaskHandler from "./structures/TaskHandler";
+import messages from "./config/messages";
 
 class OstraClient extends AkairoClient {
     constructor() {
@@ -28,6 +29,19 @@ class OstraClient extends AkairoClient {
             fetchMembers: true,
             directory: path.join(__dirname, 'commands/'),
             automateCategories: true,
+            argumentDefaults: {
+                prompt: {
+                    retries: 3,
+                    time: 30_000,
+                    cancelWord: messages.prompt.cancelWord,
+                    stopWord: messages.prompt.stopWord,
+                    modifyStart: (_, text: string): string => text + ' ' + messages.prompt.footer,
+                    modifyRetry: (_, text: string): string => text + ' ' + messages.prompt.footer,
+                    timeout: messages.prompt.timeout,
+                    ended: messages.prompt.ended,
+                    cancel: messages.prompt.cancel,
+                }
+            }
         });
 
         Logger.info('Creating Listener handler');

@@ -18,16 +18,16 @@ class TempBanCommand extends Command {
                 id: 'member',
                 type: Argument.union('member', 'user'),
                 prompt: {
-                    start: pupa(messages.startPrompt, { required: 'le membre à avertir' }),
-                    retry: pupa(messages.retryPrompt, { required: 'le membre à avertir' }),
+                    start: pupa(messages.prompt.start, { required: 'le membre à avertir' }),
+                    retry: pupa(messages.prompt.retry, { required: 'le membre à avertir' }),
                 }
             },
             {
                 id: 'duration',
                 type: 'duration',
                 prompt: {
-                    start: pupa(messages.startPrompt, { required: 'la durée (Ex: 2d <=> 2 jours / 10m <=> 10 minutes)' }),
-                    retry: pupa(messages.retryPrompt, { required: 'la durée (Ex: 2d <=> 2 jours / 10m <=> 10 minutes)' }),
+                    start: pupa(messages.prompt.start, { required: 'la durée (Ex: 2d <=> 2 jours / 10m <=> 10 minutes)' }),
+                    retry: pupa(messages.prompt.retry, { required: 'la durée (Ex: 2d <=> 2 jours / 10m <=> 10 minutes)' }),
                 }
             },            
             {
@@ -35,8 +35,8 @@ class TempBanCommand extends Command {
                 type: 'string',
                 match: 'rest',
                 prompt: {
-                    start: pupa(messages.startPrompt, { required: 'la raison' }),
-                    retry: pupa(messages.retryPrompt, { required: 'la raison' }),
+                    start: pupa(messages.prompt.start, { required: 'la raison' }),
+                    retry: pupa(messages.prompt.retry, { required: 'la raison' }),
                 }
             }],
             clientPermissions: config.settings.clientPermissions,

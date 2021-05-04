@@ -18,8 +18,8 @@ class WarnCommand extends Command {
                 id: 'user',
                 type: 'user',
                 prompt: {
-                    start: pupa(messages.startPrompt, { required: 'le membre à avertir' }),
-                    retry: pupa(messages.retryPrompt, { required: 'le membre à avertir' }),
+                    start: pupa(messages.prompt.start, { required: 'le membre à avertir' }),
+                    retry: pupa(messages.prompt.retry, { required: 'le membre à avertir' }),
                 }
             },
             {
@@ -27,8 +27,8 @@ class WarnCommand extends Command {
                 type: 'string',
                 match: 'rest',
                 prompt: {
-                    start: pupa(messages.startPrompt, { required: 'la raison' }),
-                    retry: pupa(messages.retryPrompt, { required: 'la raison' }),
+                    start: pupa(messages.prompt.start, { required: 'la raison' }),
+                    retry: pupa(messages.prompt.retry, { required: 'la raison' }),
                 }
             }],
             clientPermissions: config.settings.clientPermissions,

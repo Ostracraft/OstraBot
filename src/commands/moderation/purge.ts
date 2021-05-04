@@ -6,17 +6,18 @@ import { Argument } from "discord-akairo";
 import settings from "@app/config/settings";
 import pupa = require('pupa');
 import { Message } from "discord.js";
+import messages from "@app/config/messages";
 
 class PurgeCommand extends Command {
     constructor() {
-        super("purge", {
+        super('purge', {
             aliases: config.settings.aliases,
             args: [{
                 id: 'amount',
                 type: Argument.range('integer', 0, settings.moderation.purgeLimit + 1),
                 prompt: {
-                    start: config.messages.startPrompt,
-                    retry: config.messages.retryPrompt,
+                    start: pupa(messages.prompt.start, { required: 'le nombre de messages' }),
+                    retry: pupa(messages.prompt.retry, { required: 'le nombre de messages' }),
                 },
             },
             {
