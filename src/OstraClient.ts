@@ -3,12 +3,9 @@ import { AkairoClient, CommandHandler, ListenerHandler } from 'discord-akairo';
 import settings from '@app/config/settings';
 import * as resolvers from '@app/resolvers';
 import Logger from '@app/structures/Logger';
-
 import messages from './config/messages';
-import Sanction from './models/sanction';
 import TaskHandler from './structures/TaskHandler';
 import OstraCacheManager from './types/OstraCacheManager';
-import { nullop } from './utils';
 
 class OstraClient extends AkairoClient {
     constructor() {
@@ -67,21 +64,11 @@ class OstraClient extends AkairoClient {
         for (const [name, resolver] of Object.entries(resolvers))
             this.commandHandler.resolver.addType(name, resolver);
 
-
-        Logger.info('Caching database');
-        void this._loadSanctions();
-
         this.on('ready', () => {
             this.guild = this.guilds.resolve(settings.bot.guild);
             Logger.info('Bot is ready !');
             this.loaded = true;
         });
-    }
-
-    private async _loadSanctions(): Promise<void> {
-        const sanctions = await Sanction.find().catch(nullop);
-        if (sanctions)
-            this.cache.sanctions.push(...sanctions);
     }
 }
 
