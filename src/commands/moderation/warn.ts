@@ -15,8 +15,8 @@ class WarnCommand extends Command {
         super('warn', {
             aliases: config.settings.aliases,
             args: [{
-                id: 'member',
-                type: Argument.union('member', 'user'),
+                id: 'user',
+                type: 'user',
                 prompt: {
                     start: pupa(messages.startPrompt, { required: 'le membre à avertir' }),
                     retry: pupa(messages.retryPrompt, { required: 'le membre à avertir' }),
@@ -39,38 +39,26 @@ class WarnCommand extends Command {
     }
 
     public async exec(message: GuildMessage, args: WarnCommandArguments): Promise<void> {
-        const { member, reason } = args;
+        const { user, reason } = args;
 
-        if (member == null) {
+        if (user == null) {
             message.channel.send(config.messages.notfound);
             return;
         }
 
-        if(member instanceof User) {
-            const gmember = message.guild.members.cache.get(member.id);
-            if(gmember.roles.highest.position >= message.member.roles.highest.position) {
-                message.channel.send(config.messages.noperm);
-                return;
-            }
-        } else {
-            if(member.roles.highest.position >= message.member.roles.highest.position) {
-                message.channel.send(config.messages.noperm);
-                return;
-            }
+        const member = message.guild.members.cache.get(user.id);
+        if(member.roles.highest.position >= message.member.roles.highest.position) {
+            message.channel.send(config.messages.noperm);
+            return;
         }
 
         const processing = await message.channel.send(config.messages.processing);
-        const success = await SanctionsManager.warn(member, reason, message.member);
+        const success = await SanctionsManager.warn(user, reason, message.member);
         await processing.delete();
         if (success) {
-            const username = member instanceof GuildMember ?
-                ((member as GuildMember).nickname == null ?
-                    member.user.username :
-                    member.nickname) :
-                member.username;
                 const embed = new MessageEmbed()
                     .setTitle(config.embed.title)
-                    .addField(config.embed.username, username)
+                    .addField(config.embed.username, member.nickname == null ? user.username : `${member.nickname} (${user.username})`)
                     .addField(config.embed.reason, reason)
                     .setColor(settings.colors.default)
                     .setFooter(pupa(settings.embed.footer, { executor: (message.member.nickname ?? message.member.user.username) }))

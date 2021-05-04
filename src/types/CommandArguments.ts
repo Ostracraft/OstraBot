@@ -27,7 +27,7 @@ export interface UserInfoCommandArguments {
 }
 
 export interface WarnCommandArguments {
-    member: GuildMember | User;
+    user: User;
     reason: string;
 }
 

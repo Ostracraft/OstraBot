@@ -53,7 +53,8 @@ export const tempban = {
     private: {
         title: `{username} vous avez été sanctionné`,
         duration: '» Durée:',
-        reason: '» Raison:'
+        reason: '» Raison:',
+        message: `${settings.emojis.info} » Si vous vous déconnectez avant la fin de votre sanction, vous subirez un bannissement définitif de notre Discord d'Ostracraft. Si vous souhaitez discuter de votre sanction avec le staff, vous pouvez le faire dans ce salon même.`
     }
 }
 
@@ -75,13 +76,14 @@ export const warn = {
     messages: {
         notfound: `${settings.emojis.non} » Ce membre n'a pas été trouvé !`,
         processing: `${settings.emojis.info} » Traitement en cours...`,
-        noperm: `${settings.emojis.non} » Vous ne pouvez pas avertir cet utilisateur !`
+        noperm: `${settings.emojis.non} » Vous ne pouvez pas avertir cet utilisateur !`,
+        dm: `${settings.emojis.info} » Vous avez reçu un avertissement de la part d'un membre du staff d'Ostracraft. Nous vous invitons à revoir votre comportement. Raison: *{reason}*`
     },
     embed: {
         title: `${settings.emojis.oui} Membre averti`,
         username: '» Membre:',
-        reason: '» Raison:'
-    }
+        reason: '» Raison:',
+    },
 }
 
 export const unban = {

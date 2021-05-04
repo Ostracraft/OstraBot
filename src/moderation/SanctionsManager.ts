@@ -12,22 +12,22 @@ import pupa = require("pupa");
 import { Channel } from "discord.js";
 import { AkairoClient } from "discord-akairo";
 
-async function warn(member: GuildMember | User, reason: string, moderator: GuildMember): Promise<boolean> {
+async function warn(user: User, reason: string, moderator: GuildMember): Promise<boolean> {
     const document: SanctionBase = {
-        memberId: member.id,
+        memberId: user.id,
         type: SanctionTypes.WARN,
         reason: reason,
         start: Date.now(),
         moderatorId: moderator.id,
         revoked: false,
     }
-
+    user.send(pupa(moderationConfig.warn.messages.dm, { reason }));
     try {
         await Sanction.create(document);
         return true;
     } catch (unknownError: unknown) {
         Logger.warn('Error while trying to warn a user:');
-        Logger.warn(`\t» Member ID: ${member.id}`);
+        Logger.warn(`\t» User ID: ${user.id}`);
         Logger.warn(`\t» Moderator ID: ${moderator.id}`);
         Logger.warn(`\t» Reason: ${reason}`);
         Logger.warn('Error: ' + (unknownError as Error).name);
@@ -92,6 +92,7 @@ async function tempban(member: GuildMember | User, reason: string, duration: Dur
         .setFooter(gmember.nickname ?? gmember.user.username)
         .setTimestamp();
     channel.send(embed);
+    channel.send(moderationConfig.tempban.private.message);
 
     const document: SanctionBase = {
         memberId: member.id,
