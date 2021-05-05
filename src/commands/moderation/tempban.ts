@@ -3,8 +3,10 @@ import { MessageEmbed } from 'discord.js';
 import { tempban as config } from '@app/config/commands/moderation';
 import messages from '@app/config/messages';
 import settings from '@app/config/settings';
+import Sanction from '@app/models/sanction';
 import SanctionsManager from '@app/moderation/SanctionsManager';
-import type { GuildMessage } from '@app/types';
+import { SanctionTypes } from '@app/types';
+import type { GuildMessage, SanctionDocument } from '@app/types';
 import type { TempBanCommandArguments } from '@app/types/CommandArguments';
 import { noop } from '@app/utils';
 // eslint-disable-next-line import/order
@@ -52,6 +54,16 @@ class TempBanCommand extends Command {
 
         if (user == null) {
             message.channel.send(config.messages.notfound).catch(noop);
+            return;
+        }
+
+        const doc: SanctionDocument = await Sanction.findOne({
+            memberId: user.id,
+            type: SanctionTypes.TEMPBAN,
+            revoked: false,
+        });
+        if (doc != null) {
+            message.channel.send(config.messages.alreadybanned).catch(noop);
             return;
         }
 

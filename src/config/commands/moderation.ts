@@ -26,7 +26,7 @@ export const purge = {
 
 export const tempban = {
     settings: {
-        aliases: ['tempban', 'tban', 'sdb'],
+        aliases: ['tempban'],
         clientPermissions: permissions.SEND_MESSAGES && permissions.BAN_MEMBERS,
         userPermissions: hasStaffRole,
     },
@@ -43,6 +43,7 @@ export const tempban = {
         notfound: `${settings.emojis.non} » Ce membre n'a pas été trouvé !`,
         processing: `${settings.emojis.info} » Traitement en cours...`,
         noperm: `${settings.emojis.non} » Vous ne pouvez pas sanctionner cet utilisateur !`,
+        alreadybanned: `${settings.emojis.non} » Ce membre est déjà banni !`,
     },
     embed: {
         title: `${settings.emojis.oui} Membre sanctionné`,
@@ -55,6 +56,31 @@ export const tempban = {
         duration: '» Durée:',
         reason: '» Raison:',
         message: `${settings.emojis.info} <@{user.id}> » Si vous vous déconnectez avant la fin de votre sanction, vous subirez un bannissement définitif de notre Discord d'Ostracraft. Si vous souhaitez discuter de votre sanction avec le staff, vous pouvez le faire dans ce salon même.`,
+    },
+};
+
+export const unban = {
+    settings: {
+        aliases: ['unban'],
+        clientPermissions: permissions.SEND_MESSAGES && permissions.BAN_MEMBERS,
+        userPermissions: hasStaffRole,
+    },
+    details: {
+        name: 'Unban',
+        content: 'Permet d\'unban un membre',
+        usage: 'tempban <membre>',
+        examples: [
+            'unban @Baldark',
+        ],
+    },
+    messages: {
+        notfound: `${settings.emojis.non} » Ce membre n'a pas été trouvé !`,
+        notbanned: `${settings.emojis.non} » Ce membre n'est pas banni !`,
+        processing: `${settings.emojis.info} » Traitement en cours...`,
+    },
+    embed: {
+        title: `${settings.emojis.oui} Membre unban`,
+        username: '» Membre:',
     },
 };
 
@@ -83,29 +109,5 @@ export const warn = {
         title: `${settings.emojis.oui} Membre averti`,
         username: '» Membre:',
         reason: '» Raison:',
-    },
-};
-
-export const unban = {
-    settings: {
-        aliases: ['unban'],
-        clientPermissions: permissions.SEND_MESSAGES && permissions.BAN_MEMBERS,
-        userPermissions: hasStaffRole,
-    },
-    details: {
-        name: 'Unban',
-        content: 'Permet d\'unban un membre',
-        usage: 'tempban <membre>',
-        examples: [
-            'unban @Baldark',
-        ],
-    },
-    messages: {
-        notfound: `${settings.emojis.non} » Ce membre n'a pas été trouvé !`,
-        processing: `${settings.emojis.info} » Traitement en cours...`,
-    },
-    embed: {
-        title: `${settings.emojis.oui} Membre unban`,
-        username: '» Membre:',
     },
 };

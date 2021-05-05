@@ -23,6 +23,10 @@ export interface TempBanCommandArguments {
     reason: string;
 }
 
+export interface UnBanCommandArguments {
+    user: User;
+}
+
 export interface UserInfoCommandArguments {
     member: GuildMember | User;
 }

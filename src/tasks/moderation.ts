@@ -30,18 +30,13 @@ class ModerationTask extends Task {
             const revokeTime: number = sanction.start + sanction.duration;
             const remaining: number = revokeTime - Date.now();
             if (remaining < 0) {
-                // Update database
-                const doc = await Sanction.findOneAndUpdate(
-                    { _id: sanction.id },
-                    { $set: { revoked: true } },
-                );
-                // Unban user
-                const unban = await SanctionsManager.unban(this.client, doc);
+                const unban = await SanctionsManager.unban(this.client, sanction);
                 if (!unban) {
-                    const banChannel = this.client.guild.channels.cache.get(doc.channel);
+                    const banChannel = this.client.guild.channels.cache.get(sanction.channel);
                     // If(!banChannel || !banChannel.isText())
                     //     return;
-                    (banChannel as TextChannel).send(pupa(messages.unbanError, { victim: doc.memberId })).catch(noop);
+                    (banChannel as TextChannel).send(pupa(messages.unbanError, { victim: sanction.memberId }))
+                        .catch(noop);
                 }
             }
         }

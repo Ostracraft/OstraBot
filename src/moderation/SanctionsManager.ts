@@ -99,6 +99,12 @@ async function tempban(user: User, reason: string, duration: Duration, moderator
 
 async function unban(client: AkairoClient, doc: SanctionDocument, moderator?: GuildMember): Promise<boolean> {
     try {
+        // Update database
+        doc = await Sanction.findOneAndUpdate(
+            { _id: doc.id },
+            { $set: { revoked: true } },
+        );
+        // Unban user
         const member: GuildMember = await client.guild.members.fetch(doc.memberId);
         member.roles.remove(settings.roles.banned).catch(noop);
         const channel: TextChannel = client.guild.channels.cache.get(doc.channel) as TextChannel;
