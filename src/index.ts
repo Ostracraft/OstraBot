@@ -23,7 +23,7 @@ mongoose.connect(settings.database.mongoUri, {
 
 
 const client = new OstraClient();
-client.login(process.env.TOKEN).catch(noop);
+client.login(process.env.BOT_TOKEN).catch(noop);
 
 export default {
     client,

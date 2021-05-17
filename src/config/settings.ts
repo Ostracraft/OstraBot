@@ -1,7 +1,7 @@
 const settings = {
     bot: {
         name: 'OstraBot',
-        prefix: process.env.PREFIX,
+        prefix: process.env.BOT_PREFIX,
         guild: process.env.GUILD_ID,
     },
     roles: {
