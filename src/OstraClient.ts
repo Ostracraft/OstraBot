@@ -16,6 +16,7 @@ class OstraClient extends AkairoClient {
         });
 
         Logger.info('Starting the bot...');
+        Logger.info(`Using node ${process.env.NODE_VERSION}`)
         this.cache = new OstraCacheManager();
 
         Logger.info('Creating Command handler');
