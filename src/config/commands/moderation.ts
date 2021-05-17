@@ -1,5 +1,5 @@
-import { hasStaffRole, permissions } from '../configUtil';
-import settings from '../settings';
+import { hasStaffRole, permissions } from '@app/config/configUtil';
+import settings from '@app/config/settings';
 
 export const purge = {
     settings: {

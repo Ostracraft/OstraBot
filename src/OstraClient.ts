@@ -3,9 +3,9 @@ import { AkairoClient, CommandHandler, ListenerHandler } from 'discord-akairo';
 import settings from '@app/config/settings';
 import * as resolvers from '@app/resolvers';
 import Logger from '@app/structures/Logger';
-import messages from './config/messages';
-import TaskHandler from './structures/TaskHandler';
-import OstraCacheManager from './types/OstraCacheManager';
+import messages from '@app/config/messages';
+import TaskHandler from '@app/structures/TaskHandler';
+import OstraCacheManager from '@app/types/OstraCacheManager';
 
 class OstraClient extends AkairoClient {
     constructor() {

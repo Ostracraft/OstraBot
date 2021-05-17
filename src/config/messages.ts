@@ -1,4 +1,4 @@
-import settings from './settings';
+import settings from '@app/config/settings';
 
 const messages = {
     noperm: `${settings.emojis.non} » Vous n'avez pas la permission de faire ceci !`,

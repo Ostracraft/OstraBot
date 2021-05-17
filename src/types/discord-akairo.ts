@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
 import type { Guild } from 'discord.js';
 import type TaskHandler from '@app/structures/TaskHandler';
-import type OstraCacheManager from './OstraCacheManager';
-import type { GuildMessage } from '.';
+import type OstraCacheManager from '@app/types/OstraCacheManager';
+import type { GuildMessage } from '@app/types';
 
 declare module 'discord-akairo' {
 

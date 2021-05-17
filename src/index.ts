@@ -6,9 +6,9 @@ require('dotenv').config();
 
 import OstraClient from '@app/OstraClient';
 import settings from '@app/config/settings';
-import { noop } from './utils';
+import { noop } from '@app/utils';
 import mongoose = require('mongoose');
-import Logger from './structures/Logger';
+import Logger from '@app/structures/Logger';
 
 mongoose.connect(settings.database.mongoUri, {
     useNewUrlParser: true,

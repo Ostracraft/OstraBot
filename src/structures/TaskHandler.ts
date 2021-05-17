@@ -3,7 +3,7 @@ import type { AkairoClient, AkairoHandlerOptions } from 'discord-akairo';
 import { Collection } from 'discord.js';
 import cron from 'node-cron';
 import type { TaskInformations } from '@app/types';
-import Task from './Task';
+import Task from '@app/structures/Task';
 
 /**
  * From Skript-MC/Swan

@@ -2,7 +2,7 @@ import { Permissions } from 'discord.js';
 import type { PermissionResolvable } from 'discord.js';
 
 import type { GuildMessage } from '@app/types';
-import settings from './settings';
+import settings from '@app/config/settings';
 
 export const permissions = Permissions.FLAGS;
 export const noPermissions = [] as PermissionResolvable[];

@@ -1,4 +1,4 @@
-import settings from '../config/settings';
+import settings from '@app/config/settings';
 
 function info(message: string): void {
     console.log(`[${settings.bot.name}] ${message}`);
