@@ -1,9 +1,9 @@
 import * as path from 'path';
 import { AkairoClient, CommandHandler, ListenerHandler } from 'discord-akairo';
+import messages from '@app/config/messages';
 import settings from '@app/config/settings';
 import * as resolvers from '@app/resolvers';
 import Logger from '@app/structures/Logger';
-import messages from '@app/config/messages';
 import TaskHandler from '@app/structures/TaskHandler';
 import OstraCacheManager from '@app/types/OstraCacheManager';
 

@@ -1,5 +1,5 @@
-import settings from '@app/config/settings';
 import { noPermissions, permissions } from '@app/config/configUtil';
+import settings from '@app/config/settings';
 
 export const help = {
     settings: {
